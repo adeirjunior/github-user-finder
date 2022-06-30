@@ -37,10 +37,6 @@ export default function Page({ data }: PageProps<User | null>) {
       <img src={data.avatar_url} width={64} height={64} />
       <h1>{data.name}</h1>
       <p>{data.login}</p>
-      <form>
-        <input type="name" name="q" />
-        <button type="submit">Search</button>
-      </form>
     </div>
   );
 }
