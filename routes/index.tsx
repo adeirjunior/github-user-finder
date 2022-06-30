@@ -9,7 +9,6 @@ export const handler: Handlers = {
     const url = new URL(req.url);
     const reqUrl = url.origin;
     const query = url.searchParams.get("q") || '';
-    console.log(reqUrl);
     if (query) return Response.redirect(`${reqUrl}/${query}`);
     const res = await ctx.render();
     return res;
@@ -19,11 +18,11 @@ export const handler: Handlers = {
 export default function Page() {
 
   return (
-    <div>
-      <h3>Insert here your Github username</h3>
-      <form>
-        <input type="name" name="q" />
-        <button type="submit">Find</button>
+    <div class={tw`flex flex-col items-center justify-center`}>
+      <h3 class={tw("mb-4")}>Insert here your Github username</h3>
+      <form method="GET">
+        <input type="name" name="q" class={tw`border-2 border-slate-900 px-2 mr-4 rounded-md`} />
+        <button type="submit" class={tw`bg(purple-800 hover:purple-700 focus:purple-700) rounded-md px-2 text-white`}>Find</button>
       </form>
     </div>
   );

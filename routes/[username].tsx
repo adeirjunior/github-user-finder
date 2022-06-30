@@ -15,9 +15,13 @@ interface User {
 }
 
 export const handler: Handlers<User | null> = {
-  async GET(_, ctx) {
+  async GET(req, ctx) {
     const username = ctx.params.username || "";
     const resp = await fetch(`https://api.github.com/users/${username}`);
+    const url = new URL(req.url);
+    const reqUrl = url.origin;
+    const query = url.searchParams.get("q") || '';
+    if (query) return Response.redirect(`${reqUrl}/${query}`);
     if (resp.status === 404) {
       return ctx.render(null);
     }
@@ -28,15 +32,28 @@ export const handler: Handlers<User | null> = {
 
 export default function Page({ data }: PageProps<User | null>) {
   if (!data) {
-    return <h1>User not found</h1>;
+    return (
+      <div class={tw`flex flex-col items-center justify-center`}>
+        <h1>User not found</h1>
+        <form method="GET">
+          <input type="name" name="q" class={tw`border-2 border-slate-900 px-2 mr-4 rounded-md`} />
+          <button type="submit" class={tw`bg(purple-800 hover:purple-700 focus:purple-700) rounded-md px-2 text-white focus:outline-0`}>Find</button>
+        </form>
+      </div>
+    )
   }
 
   return (
-    <div>
-      <a href="/">back</a>
-      <img src={data.avatar_url} width={64} height={64} />
-      <h1>{data.name}</h1>
-      <p>{data.login}</p>
+    <div class={tw`flex flex-col items-center justify-center`}>
+      <div>
+        <img src={data.avatar_url} width={64} height={64} />
+        <h1>{data.name}</h1>
+        <p>{data.login}</p>
+      </div>
+      <form method="GET">
+        <input type="name" name="q" class={tw`border-2 border-slate-900 px-2 mr-4 rounded-md`} />
+        <button type="submit" class={tw`bg(purple-800 hover:purple-700 focus:purple-700) rounded-md px-2 text-white focus:border-0`}>Find</button>
+      </form>
     </div>
   );
 }
