@@ -16,8 +16,7 @@ interface User {
 
 export const handler: Handlers<User | null> = {
   async GET(_, ctx) {
-    console.log(ctx.params);
-    const username = ctx.params.username|| "";
+    const username = ctx.params.username || "";
     const resp = await fetch(`https://api.github.com/users/${username}`);
     if (resp.status === 404) {
       return ctx.render(null);
@@ -34,6 +33,7 @@ export default function Page({ data }: PageProps<User | null>) {
 
   return (
     <div>
+      <a href="/">back</a>
       <img src={data.avatar_url} width={64} height={64} />
       <h1>{data.name}</h1>
       <p>{data.login}</p>

@@ -20,9 +20,10 @@ export default function Page() {
 
   return (
     <div>
+      <h3>Insert here your Github username</h3>
       <form>
         <input type="name" name="q" />
-        <button type="submit">Search</button>
+        <button type="submit">Find</button>
       </form>
     </div>
   );
