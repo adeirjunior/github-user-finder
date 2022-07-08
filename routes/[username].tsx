@@ -5,16 +5,11 @@
 import { tw } from "@twind";
 import { h } from "preact";
 import { Handlers, PageProps } from "$fresh/server.ts";
+import Form from '../islands/Form.tsx';
+import { User as UserProp } from '../types/interfaces.ts';
+import User from '../islands/User.tsx';
 
-interface User {
-  login: string;
-  name: string;
-  avatar_url: string;
-  results: string[];
-  query: string;
-}
-
-export const handler: Handlers<User | null> = {
+export const handler: Handlers<UserProp | null> = {
   async GET(req, ctx) {
     const username = ctx.params.username || "";
     const resp = await fetch(`https://api.github.com/users/${username}`);
@@ -25,35 +20,30 @@ export const handler: Handlers<User | null> = {
     if (resp.status === 404) {
       return ctx.render(null);
     }
-    const user: User = await resp.json();
+    const user: UserProp = await resp.json();
     return ctx.render(user);
   },
 };
-
-export default function Page({ data }: PageProps<User | null>) {
+export default function Page({ data }: PageProps<UserProp | null>) {
+  const H1 = () => h(
+    'h1',
+    { class: `${tw`text( 4xl )`}` }, 
+    `${data?.name ?? 'User not found'}`
+  );
+ 
   if (!data) {
     return (
       <div class={tw`flex flex-col items-center justify-center`}>
-        <h1>User not found</h1>
-        <form method="GET">
-          <input type="name" name="q" class={tw`border-2 border-slate-900 px-2 mr-4 rounded-md`} />
-          <button type="submit" class={tw`bg(purple-800 hover:purple-700 focus:purple-700) rounded-md px-2 text-white focus:outline-0`}>Find</button>
-        </form>
+        <H1 />
+        <Form />
       </div>
     )
   }
 
   return (
     <div class={tw`flex flex-col items-center justify-center`}>
-      <div>
-        <img src={data.avatar_url} width={64} height={64} />
-        <h1>{data.name}</h1>
-        <p>{data.login}</p>
-      </div>
-      <form method="GET">
-        <input type="name" name="q" class={tw`border-2 border-slate-900 px-2 mr-4 rounded-md`} />
-        <button type="submit" class={tw`bg(purple-800 hover:purple-700 focus:purple-700) rounded-md px-2 text-white focus:border-0`}>Find</button>
-      </form>
+      <User data={data} H1={H1()}/>
+      <Form />
     </div>
   );
 }
